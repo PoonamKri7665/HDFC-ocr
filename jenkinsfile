@@ -19,20 +19,20 @@ pipeline {
 
                     // Install Azure CLI
                     sh '''
-                    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+                    curl -sL https://aka.ms/InstallAzureCLIDeb |  bash
                     '''
                     
                     // Install Docker
                     sh '''
-                    sudo apt-get update
-                    sudo apt-get install -y docker.io
+                     apt-get update
+                     apt-get install -y docker.io
                     '''
                     
                     // Install kubectl
                     sh '''
                     curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.0/bin/linux/amd64/kubectl
-                    sudo chmod +x ./kubectl
-                    sudo mv ./kubectl /usr/local/bin/kubectl
+                    chmod +x ./kubectl
+                    mv ./kubectl /usr/local/bin/kubectl
                     '''
                 }
             }
