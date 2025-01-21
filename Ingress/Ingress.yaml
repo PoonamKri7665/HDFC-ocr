@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-test
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - privatek8s.centralindia.cloudapp.azure.com
+    secretName: tls-secret
+  rules:
+  - host:  privatek8s.centralindia.cloudapp.azure.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: /amazon
+        backend:
+          service:
+            name: amazon-app-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /flipkart
+        backend:
+          service:
+            name: flipkart-app-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /myntra
+        backend:
+          service:
+            name: myntra-app-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: amazon-app-service
+            port:
+              number: 80
+
