@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amazon-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress-app-amazon
+  template:
+    metadata:
+      labels:
+        app: ingress-app-amazon
+    spec:
+      containers:
+      - name: amazon-app
+        image:  jaya91/amazon:latest
+        ports:
+        - containerPort: 80
+
