@@ -12,6 +12,32 @@ pipeline {
     }
 
     stages {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    echo "Installing required dependencies..."
+
+                    // Install Azure CLI
+                    sh '''
+                    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+                    '''
+                    
+                    // Install Docker
+                    sh '''
+                    sudo apt-get update
+                    sudo apt-get install -y docker.io
+                    '''
+                    
+                    // Install kubectl
+                    sh '''
+                    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.0/bin/linux/amd64/kubectl
+                    sudo chmod +x ./kubectl
+                    sudo mv ./kubectl /usr/local/bin/kubectl
+                    '''
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 script {
@@ -26,7 +52,7 @@ pipeline {
                 script {
                     // Login to Azure using Service Principal credentials
                     echo "Logging into Azure using Service Principal..."
-                    withCredentials([
+                    withCredentials([ 
                         string(credentialsId: 'AZURE_CLIENT_ID', variable: 'AZURE_CLIENT_ID'),
                         string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'AZURE_CLIENT_SECRET'),
                         string(credentialsId: 'AZURE_TENANT_ID', variable: 'AZURE_TENANT_ID'),
