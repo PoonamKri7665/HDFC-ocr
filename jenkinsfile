@@ -42,7 +42,7 @@ pipeline {
                 script {
                     // Build the Docker image
                     echo "Building Docker image..."
-                    sh "docker build -t ${IMAGE_NAME}/${ACR_LOGIN_SERVER} /var/jenkins_home/workspace/HDFC-OCR-uat/docker/Dockerfile"
+                    sh "docker build -t ${IMAGE_NAME}/${ACR_LOGIN_SERVER} /var/jenkins_home/workspace/HDFC-OCR-uat/docker/"
                 }
             }
         }
