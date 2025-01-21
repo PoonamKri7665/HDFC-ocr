@@ -27,15 +27,10 @@ pipeline {
                 script {
                     // Login to Azure using Service Principal credentials
                     echo "Logging into Azure using Service Principal..."
-                    withCredentials([ 
-                        string(credentialsId: 'clientID', variable: 'AZURE_CLIENT_ID'),
-                        string(credentialsId: 'clientsecret', variable: 'AZURE_CLIENT_SECRET'),
-                        string(credentialsId: 'tenatid', variable: 'AZURE_TENANT_ID'),
-                        string(credentialsId: 'subscriptionid', variable: 'AZURE_SUBSCRIPTION_ID')
-                    ]) {
+                   {
                         sh """
-                            az login --service-principal -u ${AZURE_CLIENT_ID} -p ${AZURE_CLIENT_SECRET} --tenant ${AZURE_TENANT_ID}
-                            az account set --subscription ${AZURE_SUBSCRIPTION_ID}
+                            az login --service-principal --username 246cfd43-77c5-4c63-8f77-d6a19a3876ec  --tenant e4e34038-ea1f-4882-b6e8-ccd776459ca0
+                            az account set --subscription 0d3ce63c-abaa-48ae-bbe1-f582cea576b9
                         """
                     }
                 }
