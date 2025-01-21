@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flipkart-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress-app-flipkart
+  template:
+    metadata:
+      labels:
+        app: ingress-app-flipkart
+    spec:
+      containers:
+      - name: flipkart-app
+        image:  k8spoonam.azurecr.io/flipkart:latest
+        ports:
+        - containerPort: 80
+
