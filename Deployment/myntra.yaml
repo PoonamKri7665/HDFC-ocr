@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myntra-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress-app-myntra
+  template:
+    metadata:
+      labels:
+        app: ingress-app-myntra
+    spec:
+      #imagePullSecrets:
+      # - name: k8spoonam.azurecr.io
+      containers:
+      - name: myntra-app
+        image: jaya91/myntra
+        ports:
+        - containerPort: 80
+
+
