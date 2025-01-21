@@ -1,0 +1,118 @@
+pipeline {
+    agent any
+
+    environment {
+        ACR_NAME = "hblazureacr01"                     // Azure Container Registry name
+        ACR_LOGIN_SERVER = "hblazureacr01.azurecr.io"  // ACR login server URL
+        ACR_REPO = "hbl_ocr"                           // ACR repository name (image repo)
+        AKS_CLUSTER_NAME = "hbl_azure_ci_ocr_uat_aks_01" // Azure AKS cluster name
+        AKS_RESOURCE_GROUP = "hbl-azure-ci-ocr-uat-rg-01" // Resource group for AKS
+        IMAGE_TAG = "${GIT_COMMIT}"                     // Use Git commit ID as the image tag
+        IMAGE_NAME = "flipkart"                        // Docker image name
+        AZURE_CLIENT_ID = "${secrets.AZURE_CLIENT_ID}"
+        AZURE_CLIENT_SECRET = "${secrets.AZURE_CLIENT_SECRET}"
+        AZURE_TENANT_ID = "${secrets.AZURE_TENANT_ID}"
+        AZURE_SUBSCRIPTION_ID = "${secrets.AZURE_SUBSCRIPTION_ID}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    // Checkout the latest code from GitHub repository
+                    checkout scm
+                }
+            }
+        }
+    
+        stage('Login to Azure') {
+            steps {
+                script {
+                    echo "Logging into Azure using Service Principal..."
+                    sh """
+                    az login --service-principal -u ${AZURE_CLIENT_ID} -p ${AZURE_CLIENT_SECRET} --tenant ${AZURE_TENANT_ID}
+                    az account set --subscription ${AZURE_SUBSCRIPTION_ID}
+                    """
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    echo "Building Docker image..."
+                    sh "docker build -t ${ACR_LOGIN_SERVER}/${ACR_REPO}:${IMAGE_TAG} ./docker/"
+                }
+            }
+        }
+
+        stage('Login to Azure') {
+            steps {
+                script {
+                    // Login to Azure using Service Principal credentials
+                    echo "Logging into Azure..."
+                    sh """
+                    az login --service-principal -u ${AZURE_CLIENT_ID} -p ${AZURE_CLIENT_SECRET} --tenant ${AZURE_TENANT_ID}
+                    az account set --subscription ${AZURE_SUBSCRIPTION_ID}
+                    """
+                }
+            }
+        }
+
+        stage('Login to ACR') {
+            steps {
+                script {
+                    // Login to Azure Container Registry (ACR)
+                    echo "Logging into ACR..."
+                    sh "az acr login --name ${ACR_NAME}"
+                }
+            }
+        }
+
+        stage('Push Docker Image to ACR') {
+            steps {
+                script {
+                    // Push the Docker image to Azure Container Registry
+                    echo "Pushing Docker image to ACR..."
+                    sh "docker push ${ACR_LOGIN_SERVER}/${ACR_REPO}:${IMAGE_TAG}"
+                }
+            }
+        }
+
+        stage('Link ACR to AKS') {
+            steps {
+                script {
+                    // Link ACR to AKS so that AKS can pull images from ACR
+                    echo "Linking ACR to AKS..."
+                    sh """
+                    az aks update --name ${AKS_CLUSTER_NAME} --resource-group ${AKS_RESOURCE_GROUP} --attach-acr ${ACR_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Update Kubernetes Deployment') {
+            steps {
+                script {
+                    // Connect to Azure AKS cluster and update the Kubernetes deployment
+                    echo "Deploying image to AKS..."
+                    sh """
+                    az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
+                    kubectl apply -f Deployment/
+                    kubectl apply -f Service/
+                    kubectl apply -f Ingress/
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment successful!"
+        }
+        failure {
+            echo "Deployment failed. Please check the logs."
+        }
+    }
+}
