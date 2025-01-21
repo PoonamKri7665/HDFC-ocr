@@ -42,7 +42,7 @@ pipeline {
                 script {
                     // Build the Docker image
                     echo "Building Docker image..."
-                    sh "docker build -t ${ACR_LOGIN_SERVER}/${ACR_REPO}:${IMAGE_TAG} ./docker/"
+                    sh "docker build -t ${IMAGE_NAME}/${ACR_LOGIN_SERVER} ./docker/Dockerfile"
                 }
             }
         }
@@ -62,7 +62,7 @@ pipeline {
                 script {
                     // Push the Docker image to Azure Container Registry
                     echo "Pushing Docker image to ACR..."
-                    sh "docker push ${ACR_LOGIN_SERVER}/${ACR_REPO}:${IMAGE_TAG}"
+                    sh "docker push ${IMAGE_NAME}/${ACR_LOGIN_SERVER}"
                 }
             }
         }
