@@ -42,7 +42,7 @@ pipeline {
                 script {
                     // Build the Docker image
                     echo "Building Docker image..."
-                    sh "docker build -t ${IMAGE_NAME} /var/jenkins_home/workspace/HDFC-OCR-uat/docker/"
+                    
                 }
             }
         }
@@ -62,8 +62,7 @@ pipeline {
                 script {
                     // Push the Docker image to Azure Container Registry
                     echo "Pushing Docker image to ACR..."
-                    sh "docker tag ${IMAGE_NAME} ${ACR_LOGIN_SERVER}/${IMAGE_NAME}"
-                    sh "docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}"
+                    
                 }
             }
         }
