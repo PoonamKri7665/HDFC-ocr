@@ -52,7 +52,7 @@ pipeline {
                 script {
                     // Login to Azure Container Registry (ACR)
                     echo "Logging into ACR..."
-                    sh "az acr login --name ${ACR_NAME}"
+                    sh "sleep 10"
                 }
             }
         }
