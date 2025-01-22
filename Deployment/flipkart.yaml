@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flipkart-app
-        image:  hblazureacr01.azurecr.io/flipkart:latest
+        image:  jaya91/flipkart:latest
         ports:
         - containerPort: 80
 
