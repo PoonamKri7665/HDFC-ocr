@@ -9,6 +9,11 @@ pipeline {
         AKS_RESOURCE_GROUP = "hbl-azure-ci-ocr-uat-rg-01" // Resource group for AKS
         IMAGE_TAG = "${GIT_COMMIT}"                     // Use Git commit ID as the image tag
         IMAGE_NAME = "flipkart"                        // Docker image name
+        clientid = credentials('AZURE_CLIENT_ID')
+        clientsecret = credentials('AZURE_CLIENT_SECRET')
+        tenantid = credentials('AZURE_TENANT_ID')
+        subscription = credentials('AZURE_SUBSCRIPTION_ID')
+        
     }
 
     stages {
@@ -38,8 +43,8 @@ pipeline {
                     echo "Logging into Azure using Service Principal..."
                    
                         sh """
-                            az login --service-principal --username 246cfd43-77c5-4c63-8f77-d6a19a3876ec  --password u9Z8Q~8Y-Lqc6nj52HHI9qUBlL4D4CXqi_5zta8t --tenant e4e34038-ea1f-4882-b6e8-ccd776459ca0
-                            az account set --subscription 0d3ce63c-abaa-48ae-bbe1-f582cea576b9
+                            az login --service-principal --username $clientid  --password $clientsecret  --tenant $tenantid
+                            az account set --subscription $subscription
                         """
                     
                 }
