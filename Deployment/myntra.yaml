@@ -16,7 +16,7 @@ spec:
       # - name: k8spoonam.azurecr.io
       containers:
       - name: myntra-app
-        image: jaya91/myntra
+        image: ${IMAGE_NAME}:${BUILD_NUMBER}
         ports:
         - containerPort: 80
 
